@@ -1,9 +1,9 @@
 "use strict";
-import response from "./res";
-import koneksi from "./koneksi";
+import response from "./response.js";
+import conn from "./koneksi.js";
 
 const index = (req, res) => {
-  response.ready("Aplikasi REST berjalan!");
+  response("Aplikasi Rest API berhasil berjalan!", res);
 };
 
-export default index;
+export { index };

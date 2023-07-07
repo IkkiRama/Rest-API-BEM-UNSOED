@@ -1,5 +1,7 @@
 "use strict";
-const ready = (values, res) => {
+
+const response = (values, res) => {
+  console.log(`Values ${values}`);
   let data = {
     status: 200,
     value: values,
@@ -9,4 +11,4 @@ const ready = (values, res) => {
   res.end();
 };
 
-export default ready;
+export default response;
