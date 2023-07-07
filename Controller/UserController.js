@@ -71,8 +71,22 @@ class UserController {
       }
     );
   };
-}
 
-// Menampilkan semua data yang ada di tabel
+  Delete = (req, res) => {
+    let id = req.params.id;
+
+    conn.query(`DELETE FROM user WHERE id_user=${id}`, (err, result) => {
+      if (err) {
+        response(err, res);
+      } else {
+        let data = {
+          keterangan: "Berhasil menghapus data!",
+          result,
+        };
+        response(data, res);
+      }
+    });
+  };
+}
 
 export default UserController;
