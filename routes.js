@@ -10,6 +10,8 @@ const userController = new UserController();
 const routes = function (app) {
   app.route("/").get(homeController.Index);
   app.route("/user").get(userController.Select);
+  app.route("/user/:id").get(userController.Detail);
+  app.route("/user/tambah").post(userController.Insert);
 };
 
 export default routes;
