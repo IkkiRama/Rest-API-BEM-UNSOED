@@ -1,13 +1,10 @@
 "use strict";
 import response from "./response.js";
 import koneksi from "./koneksi.js";
-import HomeController from "./Controller/HomeController.js";
-import UserController from "./Controller/UserController.js";
-import FakultasController from "./Controller/FakultasController.js";
-
-const homeController = new HomeController();
-const userController = new UserController();
-const fakultasController = new FakultasController();
+import homeController from "./Controller/HomeController.js";
+import userController from "./Controller/UserController.js";
+import fakultasController from "./Controller/FakultasController.js";
+import galeriFakultasController from "./Controller/GaleriFakultasController.js";
 
 const RouteGroup = (app, routeUrl, controller) => {
   app.route(`${routeUrl}`).get(controller.Select);
@@ -20,6 +17,8 @@ const RouteGroup = (app, routeUrl, controller) => {
 const routes = function (app) {
   app.route(`/`).get(homeController.Index);
   RouteGroup(app, "/user", userController);
+  RouteGroup(app, "/fakultas", fakultasController);
+  RouteGroup(app, "/fakultas/galeri", galeriFakultasController);
 };
 
 export default routes;
