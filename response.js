@@ -3,7 +3,7 @@
 const response = (values, res) => {
   console.log(`Values ${values}`);
   let data = {
-    status: 200,
+    status: res.statusCode,
     value: values,
   };
 

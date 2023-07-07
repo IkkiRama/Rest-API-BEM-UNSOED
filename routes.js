@@ -1,12 +1,15 @@
 "use strict";
 import response from "./response.js";
 import koneksi from "./koneksi.js";
-import { index } from "./controller.js";
+import HomeController from "./Controller/HomeController.js";
+import UserController from "./Controller/UserController.js";
 
-// inisialisasi kelas controller
+const homeController = new HomeController();
+const userController = new UserController();
 
 const routes = function (app) {
-  app.route("/").get(index);
+  app.route("/").get(homeController.Index);
+  app.route("/user").get(userController.Select);
 };
 
 export default routes;
