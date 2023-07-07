@@ -8,3 +8,5 @@ const ready = (values, res) => {
   res.json(data);
   res.end();
 };
+
+export default ready;
