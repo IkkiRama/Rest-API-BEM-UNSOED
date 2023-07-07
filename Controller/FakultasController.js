@@ -5,27 +5,81 @@ import conn from "../koneksi.js";
 class FakultasController {
   constructor() {}
   Select = (req, res) => {
-    conn.query(`SELECT * FROM fakultas`, (err, result) => {
-      if (err) {
-        response(err, res);
+    const query = `
+      SELECT f.id_fakultas, f.nama, f.image, f.lokasi, f.deskripsi,
+        GROUP_CONCAT(g.galeri) AS galeri,
+        CONCAT('[', GROUP_CONCAT(JSON_OBJECT('jenis', m.jenis, 'link', m.link)), ']') AS medsos
+      FROM fakultas f
+      LEFT JOIN galerifakultas g ON g.id_fakultas = f.id_fakultas
+      LEFT JOIN medsosfakultas m ON m.id_fakultas = f.id_fakultas
+      GROUP BY f.id_fakultas;
+    `;
+    conn.query(query, (error, results) => {
+      if (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
       } else {
-        response(result, res);
+        const formattedResults = results.map((result) => {
+          result.galeri = result.galeri.split(",");
+          result.medsos = JSON.parse(result.medsos);
+          return result;
+        });
+        response(formattedResults, res);
       }
     });
   };
 
   Detail = (req, res) => {
     let id = req.params.id;
-    conn.query(
-      `SELECT * FROM fakultas WHERE id_fakultas = ${id}`,
-      (err, result) => {
-        if (err) {
-          response(err, res);
+    const query = `
+    SELECT fakultas.id_fakultas, fakultas.nama, fakultas.image, fakultas.lokasi, fakultas.deskripsi,
+           galerifakultas.galeri, medsosfakultas.jenis, medsosfakultas.link
+    FROM fakultas
+    LEFT JOIN galerifakultas ON fakultas.id_fakultas = galerifakultas.id_fakultas
+    LEFT JOIN medsosfakultas ON fakultas.id_fakultas = medsosfakultas.id_fakultas
+    WHERE fakultas.id_fakultas = ?
+  `;
+
+    // Eksekusi query dengan parameter ID fakultas
+    conn.query(query, [id], (error, result) => {
+      if (error || result.affectedRows > 1 || result.affectedRows < 1) {
+        response(err, res);
+      } else {
+        if (result.length === 0) {
+          response("Fakultas tidak ditemukan.", res.status(404));
         } else {
-          response(result, res);
+          // Variabel untuk menyimpan data fakultas
+          let fakultasData = {
+            id_fakultas: result[0].id_fakultas,
+            nama: result[0].nama,
+            image: result[0].image,
+            lokasi: result[0].lokasi,
+            deskripsi: result[0].deskripsi,
+            galeri: [],
+            medsos: [],
+          };
+
+          // Loop untuk mengumpulkan data galeri
+          result.forEach((row) => {
+            if (row.galeri) {
+              fakultasData.galeri.push(row.galeri);
+            }
+          });
+
+          // Loop untuk mengumpulkan data medsos
+          result.forEach((row) => {
+            if (row.jenis && row.link) {
+              fakultasData.medsos.push({
+                jenis: row.jenis,
+                link: row.link,
+              });
+            }
+          });
+
+          response(fakultasData, res);
         }
       }
-    );
+    });
   };
 
   Insert = (req, res) => {
@@ -124,4 +178,6 @@ class FakultasController {
   };
 }
 
-export default FakultasController;
+const fakultasController = new FakultasController();
+
+export default fakultasController;
