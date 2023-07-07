@@ -47,6 +47,30 @@ class UserController {
       }
     );
   };
+
+  Update = (req, res) => {
+    let id = req.params.id;
+    let nama = req.body.nama;
+    let username = req.body.username;
+    let alamat = req.body.alamat;
+    let deskripsi = req.body.deskripsi;
+
+    conn.query(
+      `UPDATE user SET nama=?, username=?, alamat=?, deskripsi=? WHERE id_user=?`,
+      [nama, username, alamat, deskripsi, id],
+      (err, result) => {
+        if (err) {
+          response(err, res);
+        } else {
+          let data = {
+            keterangan: "Berhasil merubah data!",
+            result,
+          };
+          response(data, res);
+        }
+      }
+    );
+  };
 }
 
 // Menampilkan semua data yang ada di tabel
