@@ -1,0 +1,24 @@
+{
+  "name": "rest-api-bem-unsoed",
+  "version": "1.0.0",
+  "description": "rest api untuk menghubungkan data antara website dan aplikasi appsoed miliknya BEM UNSOED",
+  "main": "index.js",
+
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/IkkiRama/Rest-API-BEM-UNSOED"
+  },
+  "keywords": [
+    "Rest API",
+    "Node JS",
+    "BEM UNSOED",
+    "BEM",
+    "MEDKOM BEM UNSOED",
+    "UNSOED"
+  ],
+  "author": "Rifki Romadhan, Alfi Ghozwy",
+  "license": "ISC"
+}
