@@ -1,0 +1,24 @@
+ {
+    "id_komik": 1,
+    "id_user": 12,
+    "title_komik": "Dibalik Si Viral",
+    "author":{
+        "id_user": 12,
+        "nama": "Medkominfo BEM UNSOED",
+        "username": "Medkom",
+        "alamat": "Jln raya Grendeng",
+        "deskripsi": "Akun Official Media Komunikasi BEM UNSOED",
+    }
+    "galeri":[
+        {
+            "id_galeriKomik": 15,
+            "id_komik": 2,
+            "gambar": "Tentang-Toleransi-1.jpg"
+        },
+        {
+            "id_galeriKomik": 16,
+            "id_komik": 2,
+            "gambar": "Tentang-Toleransi-2.jpg"
+        }
+    ]
+}
