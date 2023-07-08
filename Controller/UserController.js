@@ -72,14 +72,6 @@ class UserController {
         response(users, res);
       });
     });
-
-    // conn.query(`SELECT * FROM user`, (err, result) => {
-    //   if (err) {
-    //     response(err, res);
-    //   } else {
-    //     response(result, res);
-    //   }
-    // });
   };
 
   Detail = (req, res) => {
@@ -144,14 +136,6 @@ class UserController {
         response(userJSON, res);
       });
     });
-
-    // conn.query(`SELECT * FROM user WHERE id_user = ${id}`, (err, result) => {
-    //   if (err) {
-    //     response(err, res);
-    //   } else {
-    //     response(result, res);
-    //   }
-    // });
   };
 
   Insert = (req, res) => {
