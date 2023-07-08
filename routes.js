@@ -9,6 +9,7 @@ import medsosFakultasController from "./Controller/MedsosFakultasController.js";
 import ukmController from "./Controller/UkmController.js";
 import layananController from "./Controller/LayananController.js";
 import komikController from "./Controller/KomikController.js";
+import galeriKomikController from "./Controller/GaleriKomikController.js";
 
 const RouteGroup = (app, routeUrl, controller) => {
   app.route(`${routeUrl}`).get(controller.Select);
@@ -22,11 +23,12 @@ const routes = function (app) {
   app.route(`/`).get(homeController.Index);
   RouteGroup(app, "/user", userController);
   RouteGroup(app, "/fakultas", fakultasController);
-  RouteGroup(app, "/galeri", galeriFakultasController);
+  RouteGroup(app, "/galeri/fakultas", galeriFakultasController);
   RouteGroup(app, "/medsos", medsosFakultasController);
   RouteGroup(app, "/ukm", ukmController);
   RouteGroup(app, "/layanan", layananController);
   RouteGroup(app, "/komik", komikController);
+  RouteGroup(app, "/galeri/komik", galeriKomikController);
 };
 
 export default routes;
