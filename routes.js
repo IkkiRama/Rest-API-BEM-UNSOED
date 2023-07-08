@@ -18,7 +18,7 @@ const routes = function (app) {
   app.route(`/`).get(homeController.Index);
   RouteGroup(app, "/user", userController);
   RouteGroup(app, "/fakultas", fakultasController);
-  RouteGroup(app, "/fakultas/galeri", galeriFakultasController);
+  RouteGroup(app, "/galeri", galeriFakultasController);
 };
 
 export default routes;
