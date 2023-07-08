@@ -6,6 +6,7 @@ import userController from "./Controller/UserController.js";
 import fakultasController from "./Controller/FakultasController.js";
 import galeriFakultasController from "./Controller/GaleriFakultasController.js";
 import medsosFakultasController from "./Controller/MedsosFakultasController.js";
+import ukmController from "./Controller/UkmController.js";
 
 const RouteGroup = (app, routeUrl, controller) => {
   app.route(`${routeUrl}`).get(controller.Select);
@@ -21,6 +22,7 @@ const routes = function (app) {
   RouteGroup(app, "/fakultas", fakultasController);
   RouteGroup(app, "/galeri", galeriFakultasController);
   RouteGroup(app, "/medsos", medsosFakultasController);
+  RouteGroup(app, "/ukm", ukmController);
 };
 
 export default routes;
