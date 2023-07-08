@@ -26,11 +26,13 @@ class UserController {
 
         userResults.forEach((user) => {
           const userJSON = {
-            id_user: user.id_user,
             nama: user.nama,
             username: user.username,
+            email: user.email,
+            role: user.role,
             alamat: user.alamat,
             deskripsi: user.deskripsi,
+            tanggal_daftar: user.tanggal_daftar,
             komik: [],
           };
 
@@ -97,11 +99,13 @@ class UserController {
 
         // Membentuk struktur JSON dengan nested objects
         const userJSON = {
-          id_user: user.id_user,
           nama: user.nama,
           username: user.username,
+          email: user.email,
+          role: user.role,
           alamat: user.alamat,
           deskripsi: user.deskripsi,
+          tanggal_daftar: user.tanggal_daftar,
           komik: [],
         };
 
@@ -141,24 +145,41 @@ class UserController {
   Insert = (req, res) => {
     let nama = req.body.nama;
     let username = req.body.username;
+    let email = req.body.email;
+    let password = req.body.password;
+    let role = "user";
     let alamat = req.body.alamat;
     let deskripsi = req.body.deskripsi;
+    let tanggal_daftar = req.body.tanggal_daftar;
 
     // Cek apabila user cuma input spasi
     // Trim itu membuang spasi. Example : Joko Widodo = JokoWidodo
     if (
       nama.trim() === "" ||
       username.trim() === "" ||
+      email.trim() === "" ||
+      password.trim() === "" ||
+      role.trim() === "" ||
       alamat.trim() === "" ||
-      deskripsi.trim() === ""
+      deskripsi.trim() === "" ||
+      tanggal_daftar.trim() === ""
     ) {
       response("Harap isi data dengan benar", res);
       return false;
     }
 
     conn.query(
-      `INSERT INTO user (nama,username,alamat,deskripsi) VALUES (?, ?, ?, ?)`,
-      [nama, username, alamat, deskripsi],
+      `INSERT INTO user (nama,username,email,password,role,alamat,deskripsi,tanggal_daftar) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        nama,
+        username,
+        email,
+        password,
+        role,
+        alamat,
+        deskripsi,
+        tanggal_daftar,
+      ],
       (err, result) => {
         if (err) {
           response(err, res);
@@ -177,22 +198,30 @@ class UserController {
     let id = req.params.id;
     let nama = req.body.nama;
     let username = req.body.username;
+    let email = req.body.email;
+    let password = req.body.password;
+    let role = "user";
     let alamat = req.body.alamat;
     let deskripsi = req.body.deskripsi;
+    let tanggal_daftar = req.body.tanggal_daftar;
 
     if (
       nama.trim() === "" ||
       username.trim() === "" ||
+      email.trim() === "" ||
+      password.trim() === "" ||
+      role.trim() === "" ||
       alamat.trim() === "" ||
-      deskripsi.trim() === ""
+      deskripsi.trim() === "" ||
+      tanggal_daftar.trim() === ""
     ) {
       response("Harap isi data dengan benar", res);
       return false;
     }
 
     conn.query(
-      `UPDATE user SET nama=?, username=?, alamat=?, deskripsi=? WHERE id_user=?`,
-      [nama, username, alamat, deskripsi, id],
+      `UPDATE user SET nama=?, username=?, email=?, password=?, alamat=?, deskripsi=?, tanggal_daftar=? WHERE id_user=?`,
+      [nama, username, email, password, alamat, deskripsi, tanggal_daftar, id],
       (err, result) => {
         if (err) {
           response(err, res);

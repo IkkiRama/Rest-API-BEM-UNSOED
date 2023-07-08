@@ -6,7 +6,7 @@ class KomikController {
   constructor() {}
   Select = (req, res) => {
     const query = `
-      SELECT komik.id_komik, komik.id_user, komik.title_komik, user.id_user, user.nama, user.username, user.alamat, user.deskripsi, galeriKomik.id_galerikomik, galeriKomik.gambar
+      SELECT komik.id_komik, komik.id_user, komik.title_komik, user.id_user, user.nama, user.username, user.alamat, user.deskripsi, user.tanggal_daftar, galeriKomik.id_galerikomik, galeriKomik.gambar
       FROM komik
       INNER JOIN user ON komik.id_user = user.id_user
       INNER JOIN galeriKomik ON komik.id_komik = galeriKomik.id_komik
@@ -38,6 +38,7 @@ class KomikController {
               username: row.username,
               alamat: row.alamat,
               deskripsi: row.deskripsi,
+              tanggal_daftar: row.tanggal_daftar,
             },
             galeri: [
               {
@@ -56,21 +57,13 @@ class KomikController {
 
       response(komiks, res);
     });
-
-    // conn.query(`SELECT * FROM komik`, (err, result) => {
-    //   if (err) {
-    //     response(err, res);
-    //   } else {
-    //     response(result, res);
-    //   }
-    // });
   };
 
   Detail = (req, res) => {
     let id = req.params.id;
 
     const query = `
-    SELECT komik.id_komik, komik.id_user, komik.title_komik, user.id_user, user.nama, user.username, user.alamat, user.deskripsi, galeriKomik.id_galerikomik, galeriKomik.gambar
+    SELECT komik.id_komik, komik.id_user, komik.title_komik, user.id_user, user.nama, user.username, user.alamat, user.deskripsi, user.tanggal_daftar, galeriKomik.id_galerikomik, galeriKomik.gambar
     FROM komik
     INNER JOIN user ON komik.id_user = user.id_user
     INNER JOIN galeriKomik ON komik.id_komik = galeriKomik.id_komik
@@ -93,6 +86,7 @@ class KomikController {
           username: dataQuery.username,
           alamat: dataQuery.alamat,
           deskripsi: dataQuery.deskripsi,
+          tanggal_daftar: dataQuery.tanggal_daftar,
         },
         galeri: results.map((row) => ({
           id_galeriKomik: row.id_galerikomik,
