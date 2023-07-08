@@ -16,7 +16,6 @@ class FakultasController {
     `;
     conn.query(query, (error, results) => {
       if (error) {
-        console.error(error);
         res.status(500).json({ error: "Internal Server Error" });
       } else {
         const formattedResults = results.map((result) => {
@@ -170,7 +169,6 @@ class FakultasController {
             keterangan: "Berhasil menghapus data!",
             result,
           };
-          console.log(result.affectedRows);
           response(data, res);
         }
       }

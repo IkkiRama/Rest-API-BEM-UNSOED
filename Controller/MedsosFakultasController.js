@@ -2,10 +2,10 @@
 import response from "../response.js";
 import conn from "../koneksi.js";
 
-class GaleriFakultasController {
+class MedsosFakultasController {
   constructor() {}
   Select = (req, res) => {
-    conn.query(`SELECT * FROM galerifakultas`, (err, result) => {
+    conn.query(`SELECT * FROM medsosfakultas`, (err, result) => {
       if (err) {
         response(err, res);
       } else {
@@ -17,7 +17,7 @@ class GaleriFakultasController {
   Detail = (req, res) => {
     let id = req.params.id;
     conn.query(
-      `SELECT * FROM galerifakultas WHERE id_galeriFakultas = ${id}`,
+      `SELECT * FROM medsosfakultas WHERE id_medsosFakultas = ${id}`,
       (err, result) => {
         if (err) {
           response(err, res);
@@ -30,16 +30,21 @@ class GaleriFakultasController {
 
   Insert = (req, res) => {
     let id_fakultas = req.body.id_fakultas;
-    let galeri = req.body.galeri;
+    let jenis = req.body.jenis;
+    let link = req.body.link;
 
-    if (id_fakultas.trim() === "" || galeri.trim() === "") {
+    if (
+      id_fakultas.trim() === "" ||
+      jenis.trim() === "" ||
+      link.trim() === ""
+    ) {
       response("Harap isi data dengan benar", res);
       return false;
     }
 
     conn.query(
-      `INSERT INTO galerifakultas (id_fakultas, galeri) VALUES (?, ?)`,
-      [id_fakultas, galeri],
+      `INSERT INTO medsosfakultas (id_fakultas, jenis, link) VALUES (?, ?, ?)`,
+      [id_fakultas, jenis, link],
       (err, result) => {
         if (err) {
           response(err, res);
@@ -57,16 +62,22 @@ class GaleriFakultasController {
   Update = (req, res) => {
     let id = req.params.id;
     let id_fakultas = req.body.id_fakultas;
-    let galeri = req.body.galeri;
+    let jenis = req.body.jenis;
+    let link = req.body.link;
 
-    if (id.trim() === "" || id_fakultas.trim() === "" || galeri.trim() === "") {
+    if (
+      id.trim() === "" ||
+      id_fakultas.trim() === "" ||
+      jenis.trim() === "" ||
+      link.trim() === ""
+    ) {
       response("Harap isi data dengan benar", res);
       return false;
     }
 
     conn.query(
-      `UPDATE galerifakultas SET id_fakultas=?, galeri=? WHERE id_galeriFakultas=?`,
-      [id_fakultas, galeri, id],
+      `UPDATE medsosfakultas SET id_fakultas=?, jenis=?, link=? WHERE id_medsosFakultas=?`,
+      [id_fakultas, jenis, link, id],
       (err, result) => {
         if (err) {
           response(err, res);
@@ -90,7 +101,7 @@ class GaleriFakultasController {
     }
 
     conn.query(
-      `DELETE FROM galerifakultas WHERE id_galeriFakultas=${id}`,
+      `DELETE FROM medsosfakultas WHERE id_medsosFakultas=${id}`,
       // cek apabila ada orang yang menginput id sembarangan, misal semua data ada 13 dengan id data terakhir 13. Apabila seseorang input parameter id nya 40 maka akan ditolak requesnya.
       // pengecekannya menggunakan sub data yang ada di var result
       (err, result) => {
@@ -108,6 +119,6 @@ class GaleriFakultasController {
   };
 }
 
-const galeriFakultasController = new GaleriFakultasController();
+const medsosFakultasController = new MedsosFakultasController();
 
-export default galeriFakultasController;
+export default medsosFakultasController;
