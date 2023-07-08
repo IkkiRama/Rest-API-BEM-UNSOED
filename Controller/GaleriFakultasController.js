@@ -5,7 +5,7 @@ import conn from "../koneksi.js";
 class GaleriFakultasController {
   constructor() {}
   Select = (req, res) => {
-    conn.query(`SELECT * FROM fakultas`, (err, result) => {
+    conn.query(`SELECT * FROM galerifakultas`, (err, result) => {
       if (err) {
         response(err, res);
       } else {
@@ -17,7 +17,7 @@ class GaleriFakultasController {
   Detail = (req, res) => {
     let id = req.params.id;
     conn.query(
-      `SELECT * FROM fakultas WHERE id_fakultas = ${id}`,
+      `SELECT * FROM galerifakultas WHERE id_galeriFakultas = ${id}`,
       (err, result) => {
         if (err) {
           response(err, res);
@@ -29,24 +29,17 @@ class GaleriFakultasController {
   };
 
   Insert = (req, res) => {
-    let nama = req.body.nama;
-    let image = req.body.image;
-    let lokasi = req.body.lokasi;
-    let deskripsi = req.body.deskripsi;
+    let id_fakultas = req.body.id_fakultas;
+    let galeri = req.body.galeri;
 
-    if (
-      nama.trim() === "" ||
-      image.trim() === "" ||
-      lokasi.trim() === "" ||
-      deskripsi.trim() === ""
-    ) {
+    if (id_fakultas.trim() === "" || galeri.trim() === "") {
       response("Harap isi data dengan benar", res);
       return false;
     }
 
     conn.query(
-      `INSERT INTO fakultas (nama,image, lokasi, deskripsi) VALUES (?, ?, ?, ?)`,
-      [nama, image, lokasi, deskripsi],
+      `INSERT INTO galerifakultas (id_fakultas, galeri) VALUES (?, ?)`,
+      [id_fakultas, galeri],
       (err, result) => {
         if (err) {
           response(err, res);
@@ -63,25 +56,17 @@ class GaleriFakultasController {
 
   Update = (req, res) => {
     let id = req.params.id;
-    let nama = req.body.nama;
-    let image = req.body.image;
-    let lokasi = req.body.lokasi;
-    let deskripsi = req.body.deskripsi;
+    let id_fakultas = req.body.id_fakultas;
+    let galeri = req.body.galeri;
 
-    if (
-      id.trim() === "" ||
-      nama.trim() === "" ||
-      image.trim() === "" ||
-      lokasi.trim() === "" ||
-      deskripsi.trim() === ""
-    ) {
+    if (id.trim() === "" || id_fakultas.trim() === "" || galeri.trim() === "") {
       response("Harap isi data dengan benar", res);
       return false;
     }
 
     conn.query(
-      `UPDATE fakultas SET nama=?, image=?, lokasi=?, deskripsi=? WHERE id_fakultas=?`,
-      [nama, image, lokasi, deskripsi, id],
+      `UPDATE galerifakultas SET id_fakultas=?, galeri=? WHERE id_galeriFakultas=?`,
+      [id_fakultas, galeri, id],
       (err, result) => {
         if (err) {
           response(err, res);
@@ -105,7 +90,7 @@ class GaleriFakultasController {
     }
 
     conn.query(
-      `DELETE FROM fakultas WHERE id_fakultas=${id}`,
+      `DELETE FROM galerifakultas WHERE id_galeriFakultas=${id}`,
       // cek apabila ada orang yang menginput id sembarangan, misal semua data ada 13 dengan id data terakhir 13. Apabila seseorang input parameter id nya 40 maka akan ditolak requesnya.
       // pengecekannya menggunakan sub data yang ada di var result
       (err, result) => {
