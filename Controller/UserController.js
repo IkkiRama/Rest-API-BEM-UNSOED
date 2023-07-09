@@ -17,10 +17,10 @@ class UserController {
   `;
 
     conn.query(userQuery, (error, userResults) => {
-      if (error) throw error;
+      if (error) throw response(error);
 
       conn.query(komikQuery, (error, komikResults) => {
-        if (error) throw error;
+        if (error) throw response(error);
 
         const users = [];
 

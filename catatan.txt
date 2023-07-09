@@ -3,3 +3,44 @@ user perlu diperbaiki karena ada field baru di database
 komik perlu diperbaiki di method select & Detail
 
 make jwt auth
+
+
+saya mempunyai 2 tabel dalam database mysql, tabel yang pertama itu bernama user yang berisi field id_user,nama,username,email,password,role,alamat,deskripsi,tanggal_daftar.tabel yang ke 2 bernama akses_token yang berisi field id_akses_token, id_user,akses_token,ip_addres dan juga saya mempunyai 3 role untuk user yaitu super admin,admin, dan user. Pertanyaannya, buatkan 4 jenis kodingan untuk resgister user dan login user menggunakan node js, express js, library mysql, dan body parser, ip, jsonwebtoken, md5. Gunakan juga salt ;L9j*1W/ di awal dan di akhir password sebelum di ubah ke md5 dan gunakan waktu sekarang untuk mengisi tanggal_daftar. Untuk kasus 1 endpoint nya yaitu "/auth/resgister" dan contoh skema JSON untuk kasus pertama seperti di bawah ini.
+
+
+tolong ubah untuk endpoint "/auth/login". ketika user login, maka akan menambahkan data baru ke tabel. Untuk filed ip_addres diisi dengan ip addres punyanya user yang login & akses tokennya itu token yang dikasih dari jwt
+
+
+bikinkan script untuk memverifikasi user pada file verifikasi.js menggunakan session dari user yang sedang login, 
+
+
+{
+    "status":200,
+    "values":{
+        "keterangan":"Berhasil menambahkan data user baru!",
+    }    
+}
+
+Untuk kasus 2 endpoint nya yaitu "/auth/login" dan contoh skema JSON untuk kasus kedua seperti di bawah ini. 
+{
+    "status":200,
+    "success":true,
+    "message": "Token JWT tergenerate",
+    "token": token jwt nya,
+    "user" : {
+        "id_user": id_user,
+        "nama": nama,
+        "username": username,
+        "email": email,
+        "role": role,
+        "alamat": alamat,
+        "deskripsi": deskripsi,
+        "tanggal_daftar": tanggal_daftar
+    }
+}
+
+Setelah login, data json pada kasus ke 2 dimasukan dalam sebuah session, dan setiap 1 jam sekali user harus login ulang.
+
+Untuk kasus 3 endpoint nya yaitu "/auth/logout" dan contoh skema JSON untuk kasus ketiga tolong bikinkan!
+Untuk kasus 4 endpoint nya yaitu "/auth/verifikasi" dan contoh skema JSON untuk kasus ketiga tolong bikinkan!
+                

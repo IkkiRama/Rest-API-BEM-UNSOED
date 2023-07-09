@@ -1,5 +1,5 @@
-const config = {
+const Config = {
   secret: "rahasiaku",
 };
 
-export default config;
+export default Config;
