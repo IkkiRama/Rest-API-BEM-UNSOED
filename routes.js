@@ -50,7 +50,9 @@ const routes = function (app) {
   app.route(`/auth/register`).post(authController.Registrasi);
   app.route(`/auth/login`).post(authController.Login);
   app.route(`/auth/logout`).get(authController.Logout);
-  app.route(`/auth/verivikasi`).post(authController.Verifikasi);
+  app
+    .route(`/auth/verifikasi`)
+    .post(authController.Verifikasi("/auth/verifikasi", true));
 
   app.route(`/`).get(homeController.Index);
   RouteGroup(app, "/user", false, userController);

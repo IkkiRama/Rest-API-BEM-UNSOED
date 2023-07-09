@@ -44,3 +44,7 @@ Setelah login, data json pada kasus ke 2 dimasukan dalam sebuah session, dan set
 Untuk kasus 3 endpoint nya yaitu "/auth/logout" dan contoh skema JSON untuk kasus ketiga tolong bikinkan!
 Untuk kasus 4 endpoint nya yaitu "/auth/verifikasi" dan contoh skema JSON untuk kasus ketiga tolong bikinkan!
                 
+
+
+
+bagaimana caranya menghapus data akses_token user yang masuk ketika umur dari sessionnya sudah habis

@@ -66,30 +66,6 @@ class AuthController {
         }
       }
     );
-
-    // let post = {
-    //   nama: req.body.nama,
-    //   username: req.body.username,
-    //   email: req.body.email,
-    //   password: md5(req.body.password),
-    //   role: "user",
-    //   alamat: "",
-    //   deksripsi: "",
-    //   tanggal_daftar: new Date(),
-    // };
-
-    // let query = "SELECT email, username FROM ?? WHERE username=?? OR email=??";
-    // let table = ["user", post.username, post.email];
-    // query = mysql.format(query, table);
-    // conn.createQuery(query, (err, result) => {
-    //   if (err) throw err;
-
-    //   if (result.length == 1) {
-    //     let query = "INSERT INTO ?? SET ??";
-    //     let table = ["user"];
-    //     query = mysql.format(query, table);
-    //   }
-    // });
   };
 
   Login = (req, res) => {
@@ -115,7 +91,9 @@ class AuthController {
 
           // Menyimpan data user dalam session
           // req.session.user = [];
-          req.session.user = user;
+          req.session.authenticated = true;
+          session.authenticated = true;
+          session.user = user;
 
           // Mendapatkan alamat IP pengguna yang sedang login
           const ipAddress = ip.address();
@@ -179,36 +157,49 @@ class AuthController {
           const token = tokenWithBarer.split(" ")[1];
           // Verifikasi token JWT yang dikirim dalam header Authorization
           jwt.verify(token, Config.secret, (err, decoded) => {
-            if (err || req.session.user === null) {
+            console.log("TER AUTH");
+            // console.log(session);
+            console.log(session.user);
+            // console.log(req.sessionID);
+            // console.log(session.authenticated);
+            if (
+              err ||
+              session.authenticated === undefined ||
+              session.user === undefined
+            ) {
               return res.status(401).json({ error: "Token JWT tidak valid" });
             } else {
-              if (
-                req.session.user.role == "dewa" ||
-                req.session.user.role == "super admin" ||
-                req.session.user.role == "admin"
-              ) {
-                const user = decoded;
-                next();
-              } else if (req.session.user.role == "user") {
-                if (routeURL == "/komik" || routeURL == "/layanan") {
-                  console.log("hanya untuk user");
+              console.log(routeURL);
+              if (routeURL === "/auth/verifikasi") {
+                response(
+                  {
+                    id_user: session.user.id_user,
+                    nama: session.user.nama,
+                    username: session.user.username,
+                    email: session.user.email,
+                    role: session.user.role,
+                    alamat: session.user.alamat,
+                    deskripsi: session.user.deskripsi,
+                    tanggal_daftar: session.user.tanggal_daftar,
+                  },
+                  res
+                );
+              } else {
+                if (
+                  session.user.role == "dewa" ||
+                  session.user.role == "super admin" ||
+                  session.user.role == "admin"
+                ) {
                   const user = decoded;
                   next();
+                } else if (session.user.role == "user") {
+                  if (routeURL == "/komik" || routeURL == "/layanan") {
+                    console.log("hanya untuk user");
+                    const user = decoded;
+                    next();
+                  }
                 }
               }
-              // res.status(200).json({
-              //   status: 200,
-              //   user: {
-              //     id_user: user.id_user,
-              //     nama: user.nama,
-              //     username: user.username,
-              //     email: user.email,
-              //     role: user.role,
-              //     alamat: user.alamat,
-              //     deskripsi: user.deskripsi,
-              //     tanggal_daftar: user.tanggal_daftar,
-              //   },
-              // });
             }
           });
         } else {

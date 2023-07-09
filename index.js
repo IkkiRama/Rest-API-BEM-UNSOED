@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import routes from "./routes.js";
 import morgan from "morgan";
 import session from "express-session";
+import Config from "./config/secret.js";
 
 const app = new express();
 // parse data json
@@ -13,12 +14,17 @@ app.use(morgan("dev"));
 
 app.use(
   session({
-    secret: "keyboard cat",
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false, maxAge: 30000 },
+    secret: Config.secret,
+    resave: true,
+    saveUninitialized: false,
+    cookie: { secure: true, maxAge: 30000 },
   })
 );
+
+if (app.get("env") === "production") {
+  app.set("trust proxy", 1); // trust first proxy
+  session.cookie.secure = true; // serve secure cookies
+}
 
 // memanggil routes.js
 routes(app);
