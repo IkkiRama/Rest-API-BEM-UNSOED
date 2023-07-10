@@ -2,10 +2,10 @@
 import response from "../response.js";
 import conn from "../koneksi.js";
 
-class MedsosFakultasController {
+class FasilitasKosController {
   constructor() {}
   Select = (req, res) => {
-    conn.query(`SELECT * FROM medsos_fakultas`, (err, result) => {
+    conn.query(`SELECT * FROM fasilitas_kos`, (err, result) => {
       if (err) {
         response(err, res);
       } else {
@@ -17,7 +17,7 @@ class MedsosFakultasController {
   Detail = (req, res) => {
     let id = req.params.id;
     conn.query(
-      `SELECT * FROM medsos_fakultas WHERE id_medsos_fakultas = ${id}`,
+      `SELECT * FROM fasilitas_kos WHERE id_fasilitas_kos = ${id}`,
       (err, result) => {
         if (err) {
           response(err, res);
@@ -29,22 +29,17 @@ class MedsosFakultasController {
   };
 
   Insert = (req, res) => {
-    let id_fakultas = req.body.id_fakultas;
-    let jenis = req.body.jenis;
-    let link = req.body.link;
+    let id_kos = req.body.id_kos;
+    let nama_fasilitas = req.body.nama_fasilitas;
 
-    if (
-      id_fakultas.trim() === "" ||
-      jenis.trim() === "" ||
-      link.trim() === ""
-    ) {
+    if (id_kos.trim() === "" || nama_fasilitas.trim() === "") {
       response("Harap isi data dengan benar", res);
       return false;
     }
 
     conn.query(
-      `INSERT INTO medsos_fakultas (id_fakultas, jenis, link) VALUES (?, ?, ?)`,
-      [id_fakultas, jenis, link],
+      `INSERT INTO fasilitas_kos (id_kos, nama_fasilitas) VALUES (?, ?)`,
+      [id_kos, nama_fasilitas],
       (err, result) => {
         if (err) {
           response(err, res);
@@ -61,23 +56,21 @@ class MedsosFakultasController {
 
   Update = (req, res) => {
     let id = req.params.id;
-    let id_fakultas = req.body.id_fakultas;
-    let jenis = req.body.jenis;
-    let link = req.body.link;
+    let id_kos = req.body.id_kos;
+    let nama_fasilitas = req.body.nama_fasilitas;
 
     if (
       id.trim() === "" ||
-      id_fakultas.trim() === "" ||
-      jenis.trim() === "" ||
-      link.trim() === ""
+      id_kos.trim() === "" ||
+      nama_fasilitas.trim() === ""
     ) {
       response("Harap isi data dengan benar", res);
       return false;
     }
 
     conn.query(
-      `UPDATE medsos_fakultas SET id_fakultas=?, jenis=?, link=? WHERE id_medsos_fakultas=?`,
-      [id_fakultas, jenis, link, id],
+      `UPDATE fasilitas_kos SET id_kos=?, nama_fasilitas=? WHERE id_fasilitas_kos=?`,
+      [id_kos, nama_fasilitas, id],
       (err, result) => {
         if (err) {
           response(err, res);
@@ -101,7 +94,7 @@ class MedsosFakultasController {
     }
 
     conn.query(
-      `DELETE FROM medsos_fakultas WHERE id_medsos_fakultas=${id}`,
+      `DELETE FROM fasilitas_kos WHERE id_fasilitas_kos=${id}`,
       // cek apabila ada orang yang menginput id sembarangan, misal semua data ada 13 dengan id data terakhir 13. Apabila seseorang input parameter id nya 40 maka akan ditolak requesnya.
       // pengecekannya menggunakan sub data yang ada di var result
       (err, result) => {
@@ -119,6 +112,6 @@ class MedsosFakultasController {
   };
 }
 
-const medsosFakultasController = new MedsosFakultasController();
+const fasilitasKosController = new FasilitasKosController();
 
-export default medsosFakultasController;
+export default fasilitasKosController;

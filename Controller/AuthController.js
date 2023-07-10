@@ -203,7 +203,6 @@ class AuthController {
                 );
               } else {
                 if (
-                  session.login.user.role == "dewa" ||
                   session.login.user.role == "super admin" ||
                   session.login.user.role == "admin"
                 ) {

@@ -11,6 +11,9 @@ import layananController from "./Controller/LayananController.js";
 import komikController from "./Controller/KomikController.js";
 import galeriKomikController from "./Controller/GaleriKomikController.js";
 import authController from "./Controller/AuthController.js";
+import galeriKosController from "./Controller/GaleriKosController.js";
+import fasilitasKosController from "./Controller/FasilitasKosController.js";
+import kosController from "./Controller/KosController.js";
 
 const RouteGroup = (app, routeUrl, isVerification, controller) => {
   app
@@ -63,6 +66,9 @@ const routes = function (app) {
   RouteGroup(app, "/layanan", false, layananController);
   RouteGroup(app, "/komik", false, komikController);
   RouteGroup(app, "/galeri/komik", false, galeriKomikController);
+  RouteGroup(app, "/kos", false, kosController);
+  RouteGroup(app, "/galeri/kos", false, galeriKosController);
+  RouteGroup(app, "/fasilitas/kos", false, fasilitasKosController);
 };
 
 export default routes;
