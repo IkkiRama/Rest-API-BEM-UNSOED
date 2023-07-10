@@ -1,6 +1,6 @@
 import ip from "ip";
 import md5 from "md5";
-import mysql from "mysql";
+import "dotenv/config";
 import jwt from "jsonwebtoken";
 import conn from "./../koneksi.js";
 import response from "../response.js";

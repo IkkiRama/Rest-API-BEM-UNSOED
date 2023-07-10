@@ -52,17 +52,17 @@ const routes = function (app) {
   app.route(`/auth/logout`).get(authController.Logout);
   app
     .route(`/auth/verifikasi`)
-    .post(authController.Verifikasi("/auth/verifikasi", true));
+    .post(authController.Verifikasi("/auth/verifikasi", false));
 
   app.route(`/`).get(homeController.Index);
   RouteGroup(app, "/user", false, userController);
   RouteGroup(app, "/fakultas", false, fakultasController);
-  RouteGroup(app, "/galeri/fakultas", true, galeriFakultasController);
-  RouteGroup(app, "/medsos", true, medsosFakultasController);
-  RouteGroup(app, "/ukm", true, ukmController);
-  RouteGroup(app, "/layanan", true, layananController);
-  RouteGroup(app, "/komik", true, komikController);
-  RouteGroup(app, "/galeri/komik", true, galeriKomikController);
+  RouteGroup(app, "/galeri/fakultas", false, galeriFakultasController);
+  RouteGroup(app, "/medsos", false, medsosFakultasController);
+  RouteGroup(app, "/ukm", false, ukmController);
+  RouteGroup(app, "/layanan", false, layananController);
+  RouteGroup(app, "/komik", false, komikController);
+  RouteGroup(app, "/galeri/komik", false, galeriKomikController);
 };
 
 export default routes;

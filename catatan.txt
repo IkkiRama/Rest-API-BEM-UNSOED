@@ -48,3 +48,44 @@ Untuk kasus 4 endpoint nya yaitu "/auth/verifikasi" dan contoh skema JSON untuk 
 
 
 bagaimana caranya menghapus data akses_token user yang masuk ketika umur dari sessionnya sudah habis
+
+
+{
+    title,
+    tanggal_reales,
+    gambar,
+    excerpt,
+    body,
+    author:{
+        user
+    },
+}
+
+
+
+saya mempunyai kodingan di koneksi.js seperti berikut
+import "dotenv/config";
+import mysql from "mysql";
+
+const host = process.env.DATABASE_HOST;
+const user = process.env.DATABASE_USER;
+const password = process.env.DATABASE_PASSWORD;
+const database = process.env.DATABASE_NAME;
+
+const conn = mysql.createConnection({
+  host,
+  user,
+  password,
+  database,
+});
+
+conn.connect((err) =>
+  err
+    ? console.log(`Terjadi eror pada koneksi ${err}`)
+    : console.log("Koneksi ke database berhasil")
+);
+
+export default conn;
+
+jika saya run, maka akan menghasilkan eror Terjadi eror pada koneksi Error: getaddrinfo ENOTFOUND 127.0.0.1,
+perbaiki coba kodenya

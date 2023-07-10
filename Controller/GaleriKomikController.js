@@ -5,7 +5,7 @@ import conn from "../koneksi.js";
 class GaleriKomikController {
   constructor() {}
   Select = (req, res) => {
-    conn.query(`SELECT * FROM galerikomik`, (err, result) => {
+    conn.query(`SELECT * FROM galeri_komik `, (err, result) => {
       if (err) {
         response(err, res);
       } else {
@@ -17,7 +17,7 @@ class GaleriKomikController {
   Detail = (req, res) => {
     let id = req.params.id;
     conn.query(
-      `SELECT * FROM galerikomik WHERE id_galeriKomik = ${id}`,
+      `SELECT * FROM galeri_komik WHERE id_galeri_komik = ${id}`,
       (err, result) => {
         if (err) {
           response(err, res);
@@ -38,7 +38,7 @@ class GaleriKomikController {
     }
 
     conn.query(
-      `INSERT INTO galerikomik (id_komik, gambar) VALUES (?, ?)`,
+      `INSERT INTO galeri_komik (id_komik, gambar) VALUES (?, ?)`,
       [id_komik, gambar],
       (err, result) => {
         if (err) {
@@ -65,7 +65,7 @@ class GaleriKomikController {
     }
 
     conn.query(
-      `UPDATE galerikomik SET id_komik=?, gambar=? WHERE id_galeriKomik=?`,
+      `UPDATE galeri_komik SET id_komik=?, gambar=? WHERE id_galeri_komik=?`,
       [id_komik, gambar, id],
       (err, result) => {
         if (err) {
@@ -90,7 +90,7 @@ class GaleriKomikController {
     }
 
     conn.query(
-      `DELETE FROM galerikomik WHERE id_galeriKomik=${id}`,
+      `DELETE FROM galeri_komik WHERE id_galeri_komik=${id}`,
       // cek apabila ada orang yang menginput id sembarangan, misal semua data ada 13 dengan id data terakhir 13. Apabila seseorang input parameter id nya 40 maka akan ditolak requesnya.
       // pengecekannya menggunakan sub data yang ada di var result
       (err, result) => {

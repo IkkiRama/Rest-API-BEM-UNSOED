@@ -1,6 +1,9 @@
 "use strict";
+import md5 from "md5";
+import "dotenv/config";
 import response from "../response.js";
 import conn from "../koneksi.js";
+import session from "express-session";
 
 class UserController {
   constructor() {}
@@ -9,32 +12,51 @@ class UserController {
     // Query untuk mendapatkan semua data user
     const userQuery = "SELECT * FROM user";
 
-    // Query untuk mendapatkan data komik dan galeriKomik yang dimiliki oleh setiap user
+    // Query untuk mendapatkan data komik dan galeri_komik yang dimiliki oleh setiap user
     const komikQuery = `
-    SELECT komik.id_komik, komik.id_user, komik.title_komik, galeriKomik.id_galerikomik, galeriKomik.gambar
+    SELECT komik.id_komik, komik.id_user, komik.title_komik, galeri_komik.id_galeri_komik, galeri_komik.gambar
     FROM komik
-    INNER JOIN galeriKomik ON komik.id_komik = galeriKomik.id_komik
+    INNER JOIN galeri_komik ON komik.id_komik = galeri_komik.id_komik
   `;
 
     conn.query(userQuery, (error, userResults) => {
-      if (error) throw response(error);
+      if (error) throw response(error, res);
 
       conn.query(komikQuery, (error, komikResults) => {
-        if (error) throw response(error);
+        if (error) throw response(error, res);
 
         const users = [];
+        let userJSON = {};
 
         userResults.forEach((user) => {
-          const userJSON = {
-            nama: user.nama,
-            username: user.username,
-            email: user.email,
-            role: user.role,
-            alamat: user.alamat,
-            deskripsi: user.deskripsi,
-            tanggal_daftar: user.tanggal_daftar,
-            komik: [],
-          };
+          if (
+            session.login !== undefined &&
+            session.login.user.role === "super admin"
+          ) {
+            userJSON = {
+              id: user.id,
+              nama: user.nama,
+              username: user.username,
+              email: user.email,
+              password: user.password,
+              alamat: user.alamat,
+              role: user.role,
+              deskripsi: user.deskripsi,
+              tanggal_daftar: user.tanggal_daftar,
+              komik: [],
+            };
+          } else {
+            userJSON = {
+              id: user.id,
+              nama: user.nama,
+              username: user.username,
+              email: user.email,
+              alamat: user.alamat,
+              deskripsi: user.deskripsi,
+              tanggal_daftar: user.tanggal_daftar,
+              komik: [],
+            };
+          }
 
           const userKomik = komikResults.filter(
             (komik) => komik.id_user === user.id_user
@@ -60,7 +82,7 @@ class UserController {
 
             // Menambahkan data galeri untuk setiap komik
             const galeri = {
-              id_galeriKomik: komik.id_galerikomik,
+              id_galeri_komik: komik.id_galeri_komik,
               id_komik: komik.id_komik,
               gambar: komik.gambar,
             };
@@ -81,11 +103,11 @@ class UserController {
 
     const userQuery = `SELECT * FROM user WHERE id_user = ${id}`;
 
-    // Query untuk mendapatkan data komik dan galeriKomik yang dimiliki oleh user
+    // Query untuk mendapatkan data komik dan galeri_komik yang dimiliki oleh user
     const komikQuery = `
-    SELECT komik.id_komik, komik.id_user, komik.title_komik, galeriKomik.id_galerikomik, galeriKomik.gambar
+    SELECT komik.id_komik, komik.id_user, komik.title_komik, galeri_komik.id_galeri_komik, galeri_komik.gambar
     FROM komik
-    INNER JOIN galeriKomik ON komik.id_komik = galeriKomik.id_komik
+    INNER JOIN galeri_komik ON komik.id_komik = galeri_komik.id_komik
     WHERE komik.id_user = ${id}
   `;
 
@@ -98,16 +120,34 @@ class UserController {
         const user = userResults[0];
 
         // Membentuk struktur JSON dengan nested objects
-        const userJSON = {
-          nama: user.nama,
-          username: user.username,
-          email: user.email,
-          role: user.role,
-          alamat: user.alamat,
-          deskripsi: user.deskripsi,
-          tanggal_daftar: user.tanggal_daftar,
-          komik: [],
-        };
+        if (
+          session.login !== undefined &&
+          session.login.user.role === "super admin"
+        ) {
+          const userJSON = {
+            id: user.id,
+            nama: user.nama,
+            username: user.username,
+            email: user.email,
+            password: user.password,
+            alamat: user.alamat,
+            role: user.role,
+            deskripsi: user.deskripsi,
+            tanggal_daftar: user.tanggal_daftar,
+            komik: [],
+          };
+        } else {
+          const userJSON = {
+            id: user.id,
+            nama: user.nama,
+            username: user.username,
+            email: user.email,
+            alamat: user.alamat,
+            deskripsi: user.deskripsi,
+            tanggal_daftar: user.tanggal_daftar,
+            komik: [],
+          };
+        }
 
         let currentKomikId = null;
         let currentKomik = null;
@@ -129,7 +169,7 @@ class UserController {
 
           // Menambahkan data galeri untuk setiap komik
           const galeri = {
-            id_galeriKomik: row.id_galerikomik,
+            id_galeri_komik: row.id_galeri_komik,
             id_komik: row.id_komik,
             gambar: row.gambar,
           };
@@ -146,49 +186,72 @@ class UserController {
     let nama = req.body.nama;
     let username = req.body.username;
     let email = req.body.email;
-    let password = req.body.password;
-    let role = "user";
-    let alamat = req.body.alamat;
-    let deskripsi = req.body.deskripsi;
-    let tanggal_daftar = req.body.tanggal_daftar;
+    let password = md5(process.env.SALT + req.body.password + process.env.SALT);
+    let role =
+      session.login !== undefined && session.login.user.role === "super admin"
+        ? req.body.role
+        : "user";
 
-    // Cek apabila user cuma input spasi
-    // Trim itu membuang spasi. Example : Joko Widodo = JokoWidodo
+    // Generate tanggal daftar menggunakan waktu sekarang
+    const tanggalDaftar = new Date();
+
     if (
       nama.trim() === "" ||
       username.trim() === "" ||
       email.trim() === "" ||
-      password.trim() === "" ||
-      role.trim() === "" ||
-      alamat.trim() === "" ||
-      deskripsi.trim() === "" ||
-      tanggal_daftar.trim() === ""
+      password.trim() === ""
     ) {
       response("Harap isi data dengan benar", res);
       return false;
     }
 
+    if (
+      session.login !== undefined &&
+      session.login.user.role === "super admin"
+    ) {
+      if (role.trim() === "") {
+        response("Harap isi data dengan benar", res);
+        return false;
+      }
+    }
+
+    // Cek apakah email atau username sudah ada di database
     conn.query(
-      `INSERT INTO user (nama,username,email,password,role,alamat,deskripsi,tanggal_daftar) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        nama,
-        username,
-        email,
-        password,
-        role,
-        alamat,
-        deskripsi,
-        tanggal_daftar,
-      ],
-      (err, result) => {
+      "SELECT * FROM user WHERE email = ? OR username = ?",
+      [email, username],
+      (err, results) => {
         if (err) {
-          response(err, res);
+          response(
+            {
+              error: "Terjadi kesalahan saat mengecek email dan username",
+              err,
+            },
+            res
+          );
+        } else if (results.length > 0) {
+          // Jika email atau username sudah ada, kirim respon error
+          response({ error: "Email atau username sudah digunakan" }, res);
         } else {
-          let data = {
-            keterangan: "Berhasil menambahkan data!",
-            result,
+          // Buat data user baru
+          const newUser = {
+            nama,
+            username,
+            email,
+            password,
+            role,
+            alamat: "",
+            deskripsi: "",
+            tanggal_daftar: tanggalDaftar,
           };
-          response(data, res);
+
+          // Simpan data user ke database
+          conn.query("INSERT INTO user SET ?", newUser, (err, result) => {
+            if (err) {
+              response({ error: "Gagal menambahkan data user baru", err }, res);
+            } else {
+              response("Berhasil menambahkan data user baru!", res);
+            }
+          });
         }
       }
     );
@@ -199,41 +262,77 @@ class UserController {
     let nama = req.body.nama;
     let username = req.body.username;
     let email = req.body.email;
-    let password = req.body.password;
-    let role = "user";
-    let alamat = req.body.alamat;
-    let deskripsi = req.body.deskripsi;
-    let tanggal_daftar = req.body.tanggal_daftar;
+    let password = md5(process.env.SALT + req.body.password + process.env.SALT);
+    let role =
+      session.login !== undefined && session.login.user.role === "super admin"
+        ? req.body.role
+        : "";
+    let alamat = req.body.alamat ? req.body.alamat : "";
+    let deskripsi = req.body.deskripsi ? req.body.deskripsi : "";
 
     if (
       nama.trim() === "" ||
       username.trim() === "" ||
       email.trim() === "" ||
-      password.trim() === "" ||
-      role.trim() === "" ||
-      alamat.trim() === "" ||
-      deskripsi.trim() === "" ||
-      tanggal_daftar.trim() === ""
+      password.trim() === ""
     ) {
       response("Harap isi data dengan benar", res);
       return false;
     }
 
-    conn.query(
-      `UPDATE user SET nama=?, username=?, email=?, password=?, alamat=?, deskripsi=?, tanggal_daftar=? WHERE id_user=?`,
-      [nama, username, email, password, alamat, deskripsi, tanggal_daftar, id],
-      (err, result) => {
-        if (err) {
-          response(err, res);
-        } else {
-          let data = {
-            keterangan: "Berhasil merubah data!",
-            result,
-          };
-          response(data, res);
-        }
+    if (req.body.alamat || req.body.deskripsi) {
+      if (alamat.trim() === "" || deskripsi.trim() === "") {
+        response("Harap isi data dengan benar", res);
+        return false;
       }
-    );
+    }
+
+    if (
+      session.login !== undefined &&
+      session.login.user.role === "super admin"
+    ) {
+      if (role.trim() === "") {
+        response("Harap isi data dengan benar", res);
+        return false;
+      }
+    }
+
+    if (
+      session.login !== undefined &&
+      session.login.user.role === "super admin"
+    ) {
+      conn.query(
+        `UPDATE user SET nama=?, username=?, email=?, password=?, role=?, alamat=?, deskripsi=? WHERE id_user=?`,
+        [nama, username, email, password, role, alamat, deskripsi, id],
+        (err, result) => {
+          if (err) {
+            response(err, res);
+          } else {
+            let data = {
+              keterangan: "Berhasil merubah data!",
+              result,
+            };
+            response(data, res);
+          }
+        }
+      );
+    } else {
+      conn.query(
+        `UPDATE user SET nama=?, username=?, email=?, password=?, alamat=?, deskripsi=? WHERE id_user=?`,
+        [nama, username, email, password, alamat, deskripsi, id],
+        (err, result) => {
+          if (err) {
+            response(err, res);
+          } else {
+            let data = {
+              keterangan: "Berhasil merubah data!",
+              result,
+            };
+            response(data, res);
+          }
+        }
+      );
+    }
   };
 
   Delete = (req, res) => {

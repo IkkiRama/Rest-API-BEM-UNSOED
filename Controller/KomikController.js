@@ -6,10 +6,10 @@ class KomikController {
   constructor() {}
   Select = (req, res) => {
     const query = `
-      SELECT komik.id_komik, komik.id_user, komik.title_komik, user.id_user, user.nama, user.username, user.alamat, user.deskripsi, user.tanggal_daftar, galeriKomik.id_galerikomik, galeriKomik.gambar
+      SELECT komik.id_komik, komik.id_user, komik.title_komik, user.id_user, user.nama, user.username, user.alamat, user.deskripsi, user.tanggal_daftar, galeri_komik.id_galeri_komik, galeri_komik.gambar
       FROM komik
       INNER JOIN user ON komik.id_user = user.id_user
-      INNER JOIN galeriKomik ON komik.id_komik = galeriKomik.id_komik
+      INNER JOIN galeri_komik ON komik.id_komik = galeri_komik.id_komik
     `;
 
     conn.query(query, (error, results) => {
@@ -23,7 +23,7 @@ class KomikController {
 
         if (existingKomik) {
           existingKomik.galeri.push({
-            id_galeriKomik: row.id_galerikomik,
+            id_galeri_komik: row.id_galeri_komik,
             id_komik: row.id_komik,
             gambar: row.gambar,
           });
@@ -42,7 +42,7 @@ class KomikController {
             },
             galeri: [
               {
-                id_galeriKomik: row.id_galerikomik,
+                id_galeri_komik: row.id_galeri_komik,
                 id_komik: row.id_komik,
                 gambar: row.gambar,
               },
@@ -63,10 +63,10 @@ class KomikController {
     let id = req.params.id;
 
     const query = `
-    SELECT komik.id_komik, komik.id_user, komik.title_komik, user.id_user, user.nama, user.username, user.alamat, user.deskripsi, user.tanggal_daftar, galeriKomik.id_galerikomik, galeriKomik.gambar
+    SELECT komik.id_komik, komik.id_user, komik.title_komik, user.id_user, user.nama, user.username, user.alamat, user.deskripsi, user.tanggal_daftar, galeri_komik.id_galeri_komik, galeri_komik.gambar
     FROM komik
     INNER JOIN user ON komik.id_user = user.id_user
-    INNER JOIN galeriKomik ON komik.id_komik = galeriKomik.id_komik
+    INNER JOIN galeri_komik ON komik.id_komik = galeri_komik.id_komik
     WHERE komik.id_komik=${id}
   `;
 
@@ -89,7 +89,7 @@ class KomikController {
           tanggal_daftar: dataQuery.tanggal_daftar,
         },
         galeri: results.map((row) => ({
-          id_galeriKomik: row.id_galerikomik,
+          id_galeri_komik: row.id_galeri_komik,
           id_komik: row.id_komik,
           gambar: row.gambar,
         })),

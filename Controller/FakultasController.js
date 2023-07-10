@@ -5,79 +5,108 @@ import conn from "../koneksi.js";
 class FakultasController {
   constructor() {}
   Select = (req, res) => {
-    const query = `
-      SELECT f.id_fakultas, f.nama, f.image, f.lokasi, f.deskripsi,
-        GROUP_CONCAT(g.galeri) AS galeri,
-        CONCAT('[', GROUP_CONCAT(JSON_OBJECT('jenis', m.jenis, 'link', m.link)), ']') AS medsos
-      FROM fakultas f
-      LEFT JOIN galerifakultas g ON g.id_fakultas = f.id_fakultas
-      LEFT JOIN medsosfakultas m ON m.id_fakultas = f.id_fakultas
-      GROUP BY f.id_fakultas;
-    `;
-    conn.query(query, (error, results) => {
+    const queryFakultas = "SELECT * FROM fakultas";
+    conn.query(queryFakultas, (error, results) => {
       if (error) {
-        res.status(500).json({ error: "Internal Server Error" });
+        response({ error: "Internal Server Error" }, res);
       } else {
-        const formattedResults = results.map((result) => {
-          result.galeri = result.galeri.split(",");
-          result.medsos = JSON.parse(result.medsos);
-          return result;
+        const fakultas = results.map((fakultasResult) => {
+          const queryGaleri = `SELECT galeri FROM galeri_fakultas WHERE id_fakultas = ${fakultasResult.id_fakultas}`;
+          return new Promise((resolve, reject) => {
+            conn.query(queryGaleri, (galeriError, galeriResults) => {
+              if (galeriError) {
+                reject(galeriError);
+              } else {
+                const galeri = galeriResults.map(
+                  (galeriResult) => galeriResult.galeri
+                );
+                const queryMedsos = `SELECT jenis, link FROM medsos_fakultas WHERE id_fakultas = ${fakultasResult.id_fakultas}`;
+                conn.query(queryMedsos, (medsosError, medsosResults) => {
+                  if (medsosError) {
+                    reject(medsosError);
+                  } else {
+                    const medsos = medsosResults.map((medsosResult) => ({
+                      jenis: medsosResult.jenis,
+                      link: medsosResult.link,
+                    }));
+                    const fakultasData = {
+                      id_fakultas: fakultasResult.id_fakultas,
+                      nama: fakultasResult.nama,
+                      image: fakultasResult.image,
+                      lokasi: fakultasResult.lokasi,
+                      deskripsi: fakultasResult.deskripsi,
+                      galeri,
+                      medsos,
+                    };
+                    resolve(fakultasData);
+                  }
+                });
+              }
+            });
+          });
         });
-        response(formattedResults, res);
+
+        Promise.all(fakultas)
+          .then((formattedResults) => {
+            response(formattedResults, res);
+          })
+          .catch((error) => {
+            console.error(error);
+            response({ error: "Internal Server Error" }, res);
+          });
       }
     });
   };
 
   Detail = (req, res) => {
     let id = req.params.id;
-    const query = `
-    SELECT fakultas.id_fakultas, fakultas.nama, fakultas.image, fakultas.lokasi, fakultas.deskripsi,
-           galerifakultas.galeri, medsosfakultas.jenis, medsosfakultas.link
-    FROM fakultas
-    LEFT JOIN galerifakultas ON fakultas.id_fakultas = galerifakultas.id_fakultas
-    LEFT JOIN medsosfakultas ON fakultas.id_fakultas = medsosfakultas.id_fakultas
-    WHERE fakultas.id_fakultas = ?
-  `;
 
-    // Eksekusi query dengan parameter ID fakultas
-    conn.query(query, [id], (error, result) => {
-      if (error || result.affectedRows > 1 || result.affectedRows < 1) {
-        response(err, res);
-      } else {
-        if (result.length === 0) {
-          response("Fakultas tidak ditemukan.", res.status(404));
-        } else {
-          // Variabel untuk menyimpan data fakultas
-          let fakultasData = {
-            id_fakultas: result[0].id_fakultas,
-            nama: result[0].nama,
-            image: result[0].image,
-            lokasi: result[0].lokasi,
-            deskripsi: result[0].deskripsi,
-            galeri: [],
-            medsos: [],
-          };
+    // Query untuk mengambil data fakultas berdasarkan ID
+    const queryFakultas = `SELECT * FROM fakultas WHERE id_fakultas = ${id}`;
 
-          // Loop untuk mengumpulkan data galeri
-          result.forEach((row) => {
-            if (row.galeri) {
-              fakultasData.galeri.push(row.galeri);
-            }
-          });
+    // Query untuk mengambil data galeri berdasarkan ID fakultas
+    const queryGaleri = `SELECT galeri FROM galeri_fakultas WHERE id_fakultas = ${id}`;
 
-          // Loop untuk mengumpulkan data medsos
-          result.forEach((row) => {
-            if (row.jenis && row.link) {
-              fakultasData.medsos.push({
-                jenis: row.jenis,
-                link: row.link,
-              });
-            }
-          });
+    // Query untuk mengambil data media sosial berdasarkan ID fakultas
+    const queryMedsos = `SELECT jenis, link FROM medsos_fakultas WHERE id_fakultas = ${id}`;
 
-          response(fakultasData, res);
-        }
+    // Eksekusi query
+    conn.query(queryFakultas, (err, resultFakultas) => {
+      if (err) {
+        throw err;
       }
+
+      conn.query(queryGaleri, (err, resultGaleri) => {
+        if (err) {
+          throw err;
+        }
+
+        conn.query(queryMedsos, (err, resultMedsos) => {
+          if (err) {
+            throw err;
+          }
+
+          // Mengambil nilai yang diperlukan dari hasil query
+          const fakultas = resultFakultas[0];
+          const galeri = resultGaleri.map((row) => row.galeri);
+          const medsos = resultMedsos.map((row) => ({
+            jenis: row.jenis,
+            link: row.link,
+          }));
+
+          // Membentuk skema JSON nested
+          const data = {
+            id_fakultas: fakultas.id_fakultas,
+            nama: fakultas.nama,
+            image: fakultas.image,
+            lokasi: fakultas.lokasi,
+            deskripsi: fakultas.deskripsi,
+            galeri: galeri,
+            medsos: medsos,
+          };
+          response(data, res);
+        });
+      });
     });
   };
 
