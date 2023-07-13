@@ -4,7 +4,8 @@
   "description": "rest api untuk menghubungkan data antara website dan aplikasi appsoed miliknya BEM UNSOED",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",

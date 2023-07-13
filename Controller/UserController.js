@@ -119,12 +119,14 @@ class UserController {
 
         const user = userResults[0];
 
+        let userJSON = {};
+
         // Membentuk struktur JSON dengan nested objects
         if (
           session.login !== undefined &&
           session.login.user.role === "super admin"
         ) {
-          const userJSON = {
+          userJSON = {
             id: user.id,
             nama: user.nama,
             username: user.username,
@@ -137,7 +139,7 @@ class UserController {
             komik: [],
           };
         } else {
-          const userJSON = {
+          userJSON = {
             id: user.id,
             nama: user.nama,
             username: user.username,
