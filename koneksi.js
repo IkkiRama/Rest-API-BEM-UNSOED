@@ -2,10 +2,10 @@ import "dotenv/config";
 import mysql from "mysql2";
 
 const conn = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "rest-api-bem-unsoed",
+  host: process.env.DATABASE_HOST,
+  user: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
+  database: process.env.DATABASE_NAME,
 });
 
 conn.connect((err) =>
